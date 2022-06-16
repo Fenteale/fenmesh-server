@@ -22,6 +22,13 @@ int main() {
         fprintf(stderr, "Error opening socket: %s\n", strerror(errno));
         exit(1); //exit with error
     }
+
+    if (setsockopt(socket_d, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0) {
+        fprintf(stderr, "Error configuring socket: %s\n", strerror(errno));
+    }
+    /*if (setsockopt(socket_d, SOL_SOCKET, SO_REUSEPORT, &(int){1}, sizeof(int)) < 0) {
+        fprintf(stderr, "Error configuring socket: %s\n", strerror(errno));
+    }*/
     
     struct sockaddr_in server_a, client_a;
     server_a.sin_family = AF_INET; // no idea tbh, dont touch this
@@ -38,7 +45,7 @@ int main() {
     listen(socket_d, 5);
 
     int client_d, read_size;
-    socklen_t client_len;
+    socklen_t client_len = sizeof(client_a);
     printf("Ready and waiting for clients.\n");
 
     while(1) {
